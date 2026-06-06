@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SheShield — Women Safety Risk Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="shield-icon">🛡️</span>
+        <span class="brand-text">SHE<span class="brand-accent">SHIELD</span></span>
+      </div>
+      <nav class="nav-links">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#guidelines" class="nav-link">Guidelines</a>
+        <a href="#predict" class="nav-link">Predict</a>
+        <a href="#map" class="nav-link">Safety Map</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🔒 AI-Powered Women Safety System</div>
+      <h1 class="hero-title">
+        Know Before You Go.<br>
+        <span class="hero-accent">Stay Safe. Stay Informed.</span>
+      </h1>
+      <p class="hero-subtitle">
+        SHESHIELD uses Machine Learning to predict the safety risk level
+        of any location in Jamshedpur — before you visit it.
+      </p>
+      <div class="hero-buttons">
+        <a href="#predict" class="btn btn-primary">Check Safety Now</a>
+        <a href="#map" class="btn btn-outline">View Safety Map</a>
+      </div>
+      <div class="risk-pills">
+        <span class="pill pill-green">🟢 Low Risk — Safe</span>
+        <span class="pill pill-yellow">🟡 Medium Risk — Caution</span>
+        <span class="pill pill-red">🔴 High Risk — Danger</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-strip">
+    <div class="stats-container">
+      <div class="stat-item">
+        <span class="stat-number">{{ stats.records or "—" }}</span>
+        <span class="stat-label">Data Records</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">{{ stats.areas or "—" }}</span>
+        <span class="stat-label">Areas Mapped</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">
+          {% if stats.accuracy %}{{ "%.1f"|format(stats.accuracy) }}%{% else %}—{% endif %}
+        </span>
+        <span class="stat-label">Model Accuracy</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">{{ stats.features }}</span>
+        <span class="stat-label">Safety Factors</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <div class="section-container">
+      <h2 class="section-title">How SHESHIELD Works</h2>
+      <p class="section-subtitle">Three simple steps to check safety of any location</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-icon">📍</div>
+          <div class="step-num">Step 1</div>
+          <h3>Enter Location Details</h3>
+          <p>Select area, time of day, lighting condition, crowd density and distance from police station.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-icon">🤖</div>
+          <div class="step-num">Step 2</div>
+          <h3>ML Model Analyses</h3>
+          <p>Our ML model trained on Jamshedpur data processes your input instantly.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-icon">🗺️</div>
+          <div class="step-num">Step 3</div>
+          <h3>Get Risk Prediction</h3>
+          <p>Receive a color-coded risk level with safety advice and view the area on our interactive map.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FEATURES
+  ══════════════════════════════════════════ -->
+  <section class="features-section" id="features">
+    <div class="section-container">
+      <h2 class="section-title">Why SHESHIELD?</h2>
+      <p class="section-subtitle">Simple, professional, and designed for real-time prediction</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Real-time Prediction</h3>
+          <p class="feature-desc">Instant results using a live API call—no page reload required.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3 class="feature-title">ML Model Integration</h3>
+          <p class="feature-desc">Trained model saved as <b>model.pkl</b> and loaded by Flask at startup.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3 class="feature-title">Interactive Safety Map</h3>
+          <p class="feature-desc">Folium map visualizes risk levels across Jamshedpur areas.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3 class="feature-title">Clear Safety Guidance</h3>
+          <p class="feature-desc">Color-coded risk levels + short actionable safety tips.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">End-to-End Project</h3>
+          <p class="feature-desc">Training + backend + frontend are packaged and work together.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3 class="feature-title">Reliable Demo Flow</h3>
+          <p class="feature-desc">Includes a sanity test script and step-by-step run instructions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       GUIDELINES (ADVANCED CONTENT)
+  ══════════════════════════════════════════ -->
+  <section class="guidelines-section" id="guidelines">
+    <div class="section-container">
+      <h2 class="section-title">Safety Guidelines</h2>
+      <p class="section-subtitle">How to use the prediction and what to do in each risk level</p>
+
+      <div class="guidelines-grid">
+        <div class="guide-card">
+          <div class="guide-head">
+            <span class="guide-dot dot-green"></span>
+            <h3>Low Risk</h3>
+          </div>
+          <ul class="guide-list">
+            <li>Share your live location with a trusted person.</li>
+            <li>Keep phone charged and emergency contacts saved.</li>
+            <li>Prefer well-lit routes even in safe areas.</li>
+          </ul>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-head">
+            <span class="guide-dot dot-orange"></span>
+            <h3>Medium Risk</h3>
+          </div>
+          <ul class="guide-list">
+            <li>Avoid isolated shortcuts; choose main roads.</li>
+            <li>Travel with a friend when possible.</li>
+            <li>Stay alert and keep your surroundings in mind.</li>
+          </ul>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-head">
+            <span class="guide-dot dot-red"></span>
+            <h3>High Risk</h3>
+          </div>
+          <ul class="guide-list">
+            <li><b>Avoid the area if possible</b>, especially at night.</li>
+            <li>Inform family/friends before travelling.</li>
+            <li>Keep Police (100) and emergency numbers ready.</li>
+          </ul>
+        </div>
+      </div>
+
+
+  </section>
+
+  <section class="predict-section" id="predict">
+    <div class="section-container">
+      <h2 class="section-title" style="color:white">Predict Safety Risk</h2>
+      <p class="section-subtitle" style="color:rgba(255,255,255,0.75)">
+        Fill in the location details below to get an instant risk prediction
+      </p>
+
+      <div class="predict-layout">
+
+        <div class="form-card">
+          <h3 class="form-heading">📋 Location Details</h3>
+
+          <!-- action/method remain for fallback, but JS will use /api/predict for real-time -->
+          <form id="predictForm" action="/predict" method="POST">
+            <div class="form-group">
+              <label class="form-label">📍 Select Area</label>
+              <select name="area_name" class="form-control" required>
+                <option value="" disabled {% if not area_name %}selected{% endif %}>-- Choose an area --</option>
+                {% set areas = [
+                  "Bistupur", "Sakchi", "Golmuri", "Kadma", "Sitaramdera", "Jugsalai",
+                  "Mango", "Parsudih", "Sonari", "Baridih", "Telco", "Agrico",
+                  "Burma Mines", "Bhalubasa", "Chhota Govindpur", "Dimna", "Azadnagar",
+                  "Sidhgora", "Ulidih", "Jharkhand Colony", "Lal Building", "Marine Drive",
+                  "Boram", "Karandih", "Bagbera", "Adityapur", "Gamharia", "Pathargora",
+                  "Birsa Chowk", "Sakchi Market", "Boram Basti", "Jugsalai More", "Mango Bazar",
+                  "Sidhgora More"
+                ] %}
+                {% for area in areas %}
+                  <option value="{{ area }}" {% if area_name == area %}selected{% endif %}>{{ area }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                ⚠️ Crime Rate
+                <span class="form-hint">Rate the crime level of this area (1 = very safe, 10 = very dangerous)</span>
+              </label>
+              <div class="slider-container">
+                <input type="range" name="crime_rate" id="crimeSlider" min="1" max="10" value="{{ crime_rate if result else 5 }}" class="slider">
+                <div class="slider-labels">
+                  <span>1 (Safe)</span>
+                  <span id="sliderVal" class="slider-value">{{ crime_rate if result else 5 }}</span>
+                  <span>10 (Dangerous)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">💡 Street Lighting</label>
+              <div class="radio-group">
+                <label class="radio-card">
+                  <input type="radio" name="lighting" value="Good" required {% if not result or lighting == 'Good' %}checked{% endif %}>
+                  <span class="radio-box">
+                    <span class="radio-icon">☀️</span>
+                    <span class="radio-text">Good Lighting</span>
+                    <span class="radio-desc">Street lights working, well-lit</span>
+                  </span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="lighting" value="Poor" {% if result and lighting == 'Poor' %}checked{% endif %}>
+                  <span class="radio-box">
+                    <span class="radio-icon">🌑</span>
+                    <span class="radio-text">Poor Lighting</span>
+                    <span class="radio-desc">Dark area, no street lights</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">🕐 Time of Visit</label>
+              <div class="radio-group">
+                <label class="radio-card">
+                  <input type="radio" name="time_of_day" value="Day" required {% if not result or time_of_day == 'Day' %}checked{% endif %}>
+                  <span class="radio-box">
+                    <span class="radio-icon">🌤️</span>
+                    <span class="radio-text">Daytime</span>
+                    <span class="radio-desc">6 AM – 7 PM</span>
+                  </span>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="time_of_day" value="Night" {% if result and time_of_day == 'Night' %}checked{% endif %}>
+                  <span class="radio-box">
+                    <span class="radio-icon">🌙</span>
+                    <span class="radio-text">Night</span>
+                    <span class="radio-desc">7 PM – 6 AM</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">👥 Crowd Density</label>
+              <select name="crowd_density" class="form-control" required>
+                <option value="" disabled {% if not result %}selected{% endif %}>-- Select crowd level --</option>
+                <option value="Low" {% if result and crowd_density == 'Low' %}selected{% endif %}>Low — Isolated / Few people</option>
+                <option value="Medium" {% if not result or crowd_density == 'Medium' %}selected{% endif %}>Medium — Moderate foot traffic</option>
+                <option value="High" {% if result and crowd_density == 'High' %}selected{% endif %}>High — Busy / Crowded area</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                🚔 Distance from Police Station (km)
+                <span class="form-hint">Approximate distance to nearest police station</span>
+              </label>
+              <input type="number" name="police_distance" class="form-control" min="0.1" max="10" step="0.1"
+                placeholder="e.g. 1.5" value="{{ police_distance if result else '' }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-submit" id="predictBtn">
+              🔍 Predict Safety Risk
+            </button>
+            <p id="apiHint" style="margin-top:10px;font-size:12px;color:#7f8c8d;display:none">
+              Using real-time API prediction…
+            </p>
+          </form>
+        </div>
+
+        <div class="result-panel">
+
+          <!-- Result card (JS updates this live). If server-rendered prediction exists, we pre-fill it. -->
+          <div id="resultCard"
+            class="result-card {% if result %}result-{{ result.risk_code | default('low') }}{% else %}result-low{% endif %}"
+            {% if result %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+            <div class="result-emoji" id="resultEmoji">{{ result.emoji if result else "" }}</div>
+            <div class="result-level" id="resultLevel">{{ (result.prediction or result.risk_level) if result else "" }}</div>
+            <div class="result-area" id="resultArea">{{ area_name if result else "" }}</div>
+            <div class="result-divider"></div>
+            <p class="result-message" id="resultMessage">{{ result.message if result else "" }}</p>
+
+            <div class="input-summary" id="inputSummary" {% if result %}style="display:block;"{% else %}style="display:none;"{% endif %}>
+              <h4>📋 Input Summary</h4>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <span class="s-label">Area</span>
+                  <span class="s-value" id="sumArea">{{ area_name if result else "" }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="s-label">Crime Rate</span>
+                  <span class="s-value" id="sumCrime">{{ crime_rate if result else "" }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="s-label">Lighting</span>
+                  <span class="s-value" id="sumLighting">{{ lighting if result else "" }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="s-label">Time</span>
+                  <span class="s-value" id="sumTime">{{ time_of_day if result else "" }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="s-label">Crowd</span>
+                  <span class="s-value" id="sumCrowd">{{ crowd_density if result else "" }}</span>
+                </div>
+                <div class="summary-item">
+                  <span class="s-label">Police Dist.</span>
+                  <span class="s-value" id="sumPolice">{{ police_distance if result else "" }}</span>
+                </div>
+              </div>
+            </div>
+
+            <a href="#map" class="btn btn-map-link">🗺️ View on Safety Map</a>
+          </div>
+
+          <!-- Placeholder (visible until first prediction) -->
+          <div id="resultPlaceholder" class="result-placeholder"
+            {% if result %}style="display:none;"{% else %}style="display:block;"{% endif %}>
+            <div class="placeholder-icon">🛡️</div>
+            <h3>Your Result Appears Here</h3>
+            <p>Fill in the form and click <b>Predict Safety Risk</b> to get an instant analysis.</p>
+            <div class="placeholder-steps">
+              <div class="ph-step">📍 Select area</div>
+              <div class="ph-arrow">→</div>
+              <div class="ph-step">📝 Fill details</div>
+              <div class="ph-arrow">→</div>
+              <div class="ph-step">🔍 Get result</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section" id="map">
+    <div class="section-container">
+      <h2 class="section-title">📍 Jamshedpur Safety Map</h2>
+      <p class="section-subtitle">
+        Color-coded risk levels across mapped areas. Click any marker for details.
+      </p>
+
+      <div class="map-legend">
+        <span class="legend-item"><span class="dot dot-green"></span> Low Risk — Safe</span>
+        <span class="legend-item"><span class="dot dot-orange"></span> Medium Risk — Caution</span>
+        <span class="legend-item"><span class="dot dot-red"></span> High Risk — Danger</span>
+      </div>
+
+      <div class="map-wrapper">
+        <iframe src="/map" class="map-iframe" title="Jamshedpur Safety Map"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       CONTACT US
+  ══════════════════════════════════════════ -->
+  <section class="contact-section" id="contact">
+    <div class="section-container">
+      <h2 class="section-title" style="color:white">Contact Us</h2>
+      <p class="section-subtitle" style="color:rgba(255,255,255,0.75)">
+        Send a message for feedback or collaboration (saved locally for demo)
+      </p>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3 class="contact-title">Get in touch</h3>
+          <p class="contact-desc">This form saves messages on the backend </p>
+
+          <div class="contact-info">
+            <div class="ci-row"><span class="ci-label">📍 Location</span><span class="ci-value">Jamshedpur,
+                Jharkhand</span></div>
+            <div class="ci-row"><span class="ci-label">🕒 Response</span><span class="ci-value">Within 24–48 hours
+                (demo)</span></div>
+            <div class="ci-row"><span class="ci-label">🔗 API</span><span
+                class="ci-value"><code>/api/contact</code></span></div>
+          </div>
+        </div>
+
+        <div class="contact-form-card">
+          <form id="contactForm">
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input class="form-control" name="name" placeholder="Enter your name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-control" type="email" name="email" placeholder="you@example.com" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" name="message" rows="5" placeholder="Write your message..."
+                required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-submit">Send Message</button>
+            <p id="contactStatus" class="contact-status" style="display:none"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" id="about">
+    <div class="section-container">
+      <h2 class="section-title">About SHESHIELD</h2>
+      <p class="section-subtitle">Built as a Final Year Project</p>
+
+      <div class="tech-stack">
+        <h3 class="tech-title">Technologies Used</h3>
+        <div class="tech-pills">
+          <span class="tech-pill">🐍 Python</span>
+          <span class="tech-pill">🧠 scikit-learn</span>
+          <span class="tech-pill">📊 Pandas</span>
+          <span class="tech-pill">🌐 Flask</span>
+          <span class="tech-pill">🗺️ Folium</span>
+          <span class="tech-pill">💻 HTML & CSS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="shield-icon">🛡️</span>
+        <span class="brand-text">SHE<span class="brand-accent">SHIELD</span></span>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#guidelines">Guidelines</a>
+        <a href="#predict">Predict</a>
+        <a href="#map">Map</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <p class="footer-text">
+        BCA Final Year Project · Academic Session 2023–2026
+      </p>
+      <p class="footer-copy">© 2026 SHESHIELD.</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
